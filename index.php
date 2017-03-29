@@ -15,14 +15,39 @@ $projectsListIgnore = explode(",",IGNORED_PROJECTS);
 $messages = array(
    "fr" => array(
       "langue" => "Francais",
-      "Back to top" => "Revenir en haut",
-      "Project's URL" => "URLs du projet",
-      "General settings" => "Réglages généraux",
-      "Add manually" => "Ajouter manuellement",
+      // Header
+      "Launch fastly your projects with Dashboard Apache Mysql PHP" => "Lancez rapidement vos projects avec Dashboard Apache Mysql PHP",
       "Projects" => "Projets",
       "Configuration" => "Configuration",
       "Customization" => "Personnalisation",
-      "Show full configuration" => "Déplier les configurations"
+      "Show full configuration" => "Déplier les configurations",
+      "I got" => "J'ai",
+      "with" => "avec",
+      "on" => "sur",
+      // Global form
+      "Save" => "Enregistrer",
+      "General settings" => "Réglages généraux",
+      "Add manually" => "Ajouter manuellement",
+      "First favorite" => "Premier favoris",
+      "Second favorite" => "Deuxième favoris",
+      "Third favorite" => "Troisième favoris",
+      "Fourth favorite" => "Quatrième favoris",
+      // Solo Project Form
+      "Project's name" => "Nom du projet",
+      "Default" => "Par défaut",
+      "Finished" => "Terminé",
+      "Personnal" => "Personnel",
+      "Professional" => "Professionnel",
+      "Others" => "Autre",
+      "Project's badges" => "Badges du projet",
+      "Project's URL" => "URLs du projet",
+      "Description" => "Description",
+      "First link" => "Premier lien",
+      "Second link" => "Deuxième lien",
+      "Third link" => "Troisième lien",
+      "Fourth link" => "Quatrième lien",
+      // Footer
+      "Back to top" => "Revenir en haut",
    )
 );
 
@@ -359,7 +384,7 @@ function updateConfig($json, $create = false)
                             <b>OS :</b> GNU/Linux, Windows, MacOS <br>
                             <b>Requirements :</b> Apache, PHP <br>
                             <b>Lib :</b> jQuery@3.1.1, Bootstrap@v4-alpha, Tether@1.3.3 <br>
-                            <b>Fork me on Github :</b> https://github.com/TiDJ/Dashboard-Apache-MySQL-Php
+                            <b>Fork me on Github :</b> https://github.com/TiDJ/DAMP
                         </p>
                     </div>
                     <div class="col-sm-4 py-4">
@@ -376,7 +401,7 @@ function updateConfig($json, $create = false)
         </div>
         <div class="navbar navbar-inverse bg-inverse">
             <div class="container d-flex justify-content-between">
-                <a href="index.php" class="navbar-brand"><span class="hidden-xs-down">Dashboard Apache MySQL PHP</span><span class="hidden-sm-up">DAMP</span></a>
+                <a href="index.php" class="navbar-brand"><span class="hidden-xs-down"><i>Dashboard Apache MySQL PHP</i></span><span class="hidden-sm-up">DAMP</span></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -386,7 +411,7 @@ function updateConfig($json, $create = false)
         <section style="background-color:white;" class="jumbotron text-center">
             <div class="container">
                 <h1 style="font-size: 5rem;" class="jumbotron-heading">DAMP</h1>
-                <p class="lead text-muted">Launch fastly your projects with Dashboard Apache Mysql PHP</p>
+                <p class="lead text-muted"><?php e_("Launch fastly your projects with Dashboard Apache Mysql PHP") ?></p>
                 <p>
                     <a href="#projects" class="btn btn-secondary"><?php e_("Projects"); ?></a>
                     <a href="#accordion" class="btn btn-secondary"><?php e_("Configuration"); ?></a>
@@ -395,9 +420,9 @@ function updateConfig($json, $create = false)
                 </p>
                 <h6>
                     <i>
-                        I got <span class="badge badge-primary">PHP <?php echo $php_version; ?></span>
-                        with <span class="badge badge-warning">MySQL <?php echo $mysql_version; ?></span>
-                        on <span class="badge badge-danger">Apache <?php echo $apache_version; ?></span>
+                        <?php e_("I got") ?> <span class="badge badge-primary">PHP <?php echo $php_version; ?></span>
+                        <?php e_("with") ?> <span class="badge badge-warning">MySQL <?php echo $mysql_version; ?></span>
+                        <?php e_("on") ?> <span class="badge badge-danger">Apache <?php echo $apache_version; ?></span>
                     </i>
                 </h6>
                 <p>
@@ -643,26 +668,25 @@ function updateConfig($json, $create = false)
                                         <?php e_('General settings'); ?>
                                     </a>
                                 </div>
-
                                 <div id="c1" class="collapse" role="tabpanel" aria-labelledby="hp1">
                                     <div class="card-block">
                                         <div class="form-group row">
-                                            <label for="example-text-input" class="col-2 col-form-label">Premier favoris</label>
+                                            <label for="example-text-input" class="col-2 col-form-label"><?php e_("First favorite"); ?></label>
                                             <div class="col-md-5"><input type="text" value="<?php echoIfIsset($data["favorites"][0]['title']); ?>" name="favorites[0][title]" class="form-control" placeholder="Titles of favorites"></div>
                                             <div class="col-md-5"><input type="text" value="<?php echoIfIsset($data["favorites"][0]['link']); ?>" name="favorites[0][link]" class="form-control" placeholder="Link of favorites"></div>
                                         </div>
                                         <div class="form-group row">
-                                            <label for="example-text-input" class="col-2 col-form-label">Deuxième favoris</label>
+                                            <label for="example-text-input" class="col-2 col-form-label"><?php e_("Second favorite"); ?></label>
                                             <div class="col-md-5"><input type="text" value="<?php echoIfIsset($data["favorites"][1]['title']); ?>" name="favorites[1][title]" class="form-control" placeholder="Titles of favorites"></div>
                                             <div class="col-md-5"><input type="text" value="<?php echoIfIsset($data["favorites"][1]['link']); ?>" name="favorites[1][link]" class="form-control" placeholder="Link of favorites"></div>
                                         </div>
                                         <div class="form-group row">
-                                            <label for="example-text-input" class="col-2 col-form-label">Troisième favoris</label>
+                                            <label for="example-text-input" class="col-2 col-form-label"><?php e_("Third favorite"); ?></label>
                                             <div class="col-md-5"><input type="text" value="<?php echoIfIsset($data["favorites"][2]['title']); ?>" name="favorites[2][title]" class="form-control" placeholder="Titles of favorites"></div>
                                             <div class="col-md-5"><input type="text" value="<?php echoIfIsset($data["favorites"][2]['link']); ?>" name="favorites[2][link]" class="form-control" placeholder="Link of favorites"></div>
                                         </div>
                                         <div class="form-group row">
-                                            <label for="example-text-input" class="col-2 col-form-label">Quatrième favoris</label>
+                                            <label for="example-text-input" class="col-2 col-form-label"><?php e_("Fourth favorite"); ?></label>
                                             <div class="col-md-5"><input type="text" value="<?php echoIfIsset($data["favorites"][3]['title']); ?>" name="favorites[3][title]" class="form-control" placeholder="Titles of favorites"></div>
                                             <div class="col-md-5"><input type="text" value="<?php echoIfIsset($data["favorites"][3]['link']); ?>" name="favorites[3][link]" class="form-control" placeholder="Link of favorites"></div>
                                         </div>
@@ -686,11 +710,11 @@ function updateConfig($json, $create = false)
                                                     </div>
                                                     <div class="col-md-3">
                                                         <select class="form-control" name="projects[<?php echo $projects_name ?>][Color]">
-                                                            <option <?php compareIfIsset($projects_element['Color'], "default", "selected") ?> value="default">Default</option>
-                                                            <option <?php compareIfIsset($projects_element['Color'], "success", "selected") ?> value="success">Finished</option>
-                                                            <option <?php compareIfIsset($projects_element['Color'], "primary", "selected") ?> value="primary">Personnal</option>
-                                                            <option <?php compareIfIsset($projects_element['Color'], "danger", "selected") ?> value="danger">Professional</option>
-                                                            <option <?php compareIfIsset($projects_element['Color'], "warning", "selected") ?> value="warning">Others</option>
+                                                            <option <?php compareIfIsset($projects_element['Color'], "default", "selected") ?> value="default"><?php e_("Default"); ?></option>
+                                                            <option <?php compareIfIsset($projects_element['Color'], "success", "selected") ?> value="success"><?php e_("Finished"); ?></option>
+                                                            <option <?php compareIfIsset($projects_element['Color'], "primary", "selected") ?> value="primary"><?php e_("Personnal"); ?></option>
+                                                            <option <?php compareIfIsset($projects_element['Color'], "danger", "selected") ?> value="danger"><?php e_("Professional"); ?></option>
+                                                            <option <?php compareIfIsset($projects_element['Color'], "warning", "selected") ?> value="warning"><?php e_("Others"); ?></option>
                                                         </select>
                                                     </div>
                                                     <div class="col-md-3">
@@ -725,24 +749,24 @@ function updateConfig($json, $create = false)
                                                     <div class="col-md-3"><input type="text" value="<?php echoIfIsset($projects_element['PROD']); ?>" name="projects[<?php echo $projects_name ?>][PROD]" class="form-control" placeholder="PROD"></div>
                                                 </div>
                                                 <div class="form-group row">
-                                                    <label for="example-text-input" class="col-2 col-form-label">Description</label>
+                                                    <label for="example-text-input" class="col-2 col-form-label"><?php e_("Description"); ?></label>
                                                     <div class="col-md-10">
                                                         <textarea name="projects[<?php echo $projects_name ?>][Description]" class="form-control" placeholder="Description" rows="3"><?php echoIfIsset($projects_element['Description']); ?></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
-                                                    <label for="example-text-input" class="col-2 col-form-label">Premier lien</label>
+                                                    <label for="example-text-input" class="col-2 col-form-label"><?php e_("First link"); ?></label>
                                                     <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][0]['title']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][0][title]" type="text" class="form-control" placeholder="Intitulé"></div>
                                                     <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][0]['link']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][0][link]" type="text" class="form-control" placeholder="Lien"></div>
-                                                    <label for="example-text-input" class="col-2 col-form-label">Deuxième lien</label>
+                                                    <label for="example-text-input" class="col-2 col-form-label"><?php e_("Second link"); ?></label>
                                                     <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][1]['title']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][1][title]" type="text" class="form-control" placeholder="Intitulé"></div>
                                                     <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][1]['link']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][1][link]" type="text" class="form-control" placeholder="Lien"></div>
                                                 </div>
                                                 <div class="form-group row">
-                                                    <label for="example-text-input" class="col-2 col-form-label">Troisième lien</label>
+                                                    <label for="example-text-input" class="col-2 col-form-label"><?php e_("Third link"); ?></label>
                                                     <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][2]['title']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][2][title]" type="text" class="form-control" placeholder="Intitulé"></div>
                                                     <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][2]['link']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][2][link]" type="text" class="form-control" placeholder="Lien"></div>
-                                                    <label for="example-text-input" class="col-2 col-form-label">Quatrième lien</label>
+                                                    <label for="example-text-input" class="col-2 col-form-label"><?php e_("Fourth link"); ?></label>
                                                     <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][3]['title']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][3][title]" type="text" class="form-control" placeholder="Intitulé"></div>
                                                     <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][3]['link']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][3][link]" type="text" class="form-control" placeholder="Lien"></div>
                                                 </div>
@@ -756,10 +780,9 @@ function updateConfig($json, $create = false)
                                     <a href="?add"  id="AddProject" name="" value="" class="btn btn-block">- <?php e_("Add manually"); ?> -</a>
                                 </div>
                                 <div class="col-sm-9">
-                                    <input type="submit" name="" value="Enregistrer" class="btn btn-success btn-block">
+                                    <input type="submit" name="" value="<?php e_('Save'); ?>" class="btn btn-success btn-block">
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </form>
