@@ -9,28 +9,36 @@ Define (name,version,description,website, important link, etc.) your projects, p
 A hightly configurable panel, who create a Json in the "index.php" (config.json). It contain your configurations to create your own dashboard.
 Get easily your web configuration (Apache, PHP, Mysql, etc.)
 
-## Requierement
+## Requirements
 
 - PHP 4+
 - Apache 2
 
 ## How to install
 
-You can simply copy paste the "index.php", or :
+You can simply copy paste the "index.standalone.php", or :
 ```
 git clone git@github.com:TiDJ/DAMP.git # or clone your own fork
 cd DAMP
-cp ./index.php /var/www/html/ # or /var/www, /www, etc.
+vim config.php
 ```
+and update your WWW_DIR / WORKSPACE folder.
+
 Your new dashboard should now be running on [localhost](http://localhost/).
 
-## Optionnal
+## Optional
 
 If you want a default project set in your dashboard :
 ```
 cd DAMP
-cp ./config.json /var/www/html/ # or /var/www, /www, etc.
+cp config.default.json config.json # or /var/www, /www, etc.
 ```
+
+## Librairies
+- jQuery@3.1.1,
+- Bootstrap@v4-alpha
+- Tether@1.3.3
+
 ## About
 
 The examples of defaults projects are some pretty design, but they are by no means related to me.
