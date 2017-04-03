@@ -279,101 +279,13 @@ function updateConfig($json, $create = false)
         <link rel="icon" href="../../favicon.ico">
         <title>DAMP</title>
         <link href="assets/css/bootstrap.min.css" rel="stylesheet">
-        <style media="screen">
-            /*Accordions*/
-            #accordion {
-                border:0
-            }
-            #accordion .card-header {
-                background-color:#eceeef;
-                font-weight:bold;
-                border:0;
-            }
-
-            #accordion .card {
-                border:0;
-            }
-            .accordion a {
-                color:#333;
-                width:100%;
-                display:inline-block;
-            }
-            .accordion a:hover {
-                color:#333;
-                text-decoration: none;
-            }
-
-             /*Parameters*/
-            #parameters {
-                border:0
-            }
-            #parameters .card-header {
-                background-color:#fff;
-                font-weight:bold;
-                border:0;
-            }
-            #parameters .card {
-                border:0;
-            }
-
-            /*Projects list*/
-            .list-group-item {
-                background-color: #f5f5f5;
-            }
-            #projects {
-                background-color: #eceeef;
-                padding:30px 0;
-            }
-            #projects .card-block a {
-                border:none;
-            }
-
-            /*Badge Link*/
-            .badge-link {
-                background-color: #3e3e3e;
-            }
-            .badge-link a {
-                color:#fff;
-                background:none;
-            }
-
-            /*Cards*/
-            .card {
-                margin-bottom: 20px;
-            }
-            .card-default {
-                background-color: #3e3e3e;
-                border-color: #3e3e3e;
-            }
-
-            /*Card Header Title*/
-            .card-header-title a {
-                border-radius: 0;
-            }
-            .card-header-title a:first-of-type {
-                border-top-left-radius: .25rem;
-                border-bottom-left-radius: .25rem;
-            }
-            .card-header-title a:last-of-type {
-                border-top-right-radius: .25rem;
-                border-bottom-right-radius: .25rem;
-            }
-
-            /* Others */
-            .btn-grey {
-                color:#333;
-            }
-            .main-part {
-                padding:30px 0;
-            }
-        </style>
+        <link href="assets/css/style.min.css" rel="stylesheet">
     </head>
 
     <body>
-        <?php preg_match("([0-9\.]+)", apache_get_version(), $match);
-        $apache_version = $match[0];
-        $php_version = phpversion();
-        ?>
+        <?php preg_match("([0-9\.]+)", apache_get_version(), $match); ?>
+        <?php $apache_version = $match[0]; ?>
+        <?php $php_version = phpversion(); ?>
 
         <div class="collapse bg-inverse" id="navbarHeader">
             <div class="container">
@@ -399,9 +311,13 @@ function updateConfig($json, $create = false)
                 </div>
             </div>
         </div>
+
         <div class="navbar navbar-inverse bg-inverse">
             <div class="container d-flex justify-content-between">
-                <a href="index.php" class="navbar-brand"><span class="hidden-xs-down"><i>Dashboard Apache MySQL PHP</i></span><span class="hidden-sm-up">DAMP</span></a>
+                <a href="index.php" class="navbar-brand">
+                    <span class="hidden-xs-down"><i>Dashboard Apache MySQL PHP</i></span>
+                    <span class="hidden-sm-up">DAMP</span>
+                </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
