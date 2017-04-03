@@ -62,12 +62,12 @@ function phpinfo_array()
     $info_arr = array();
     $info_lines = explode("\n", strip_tags(ob_get_clean(), "<tr><td><h2>"));
     $cat = "General";
-    foreach($info_lines as $line) {
+    foreach ($info_lines as $line) {
         preg_match("~<h2>(.*)</h2>~", $line, $title) ? $cat = $title[1] : null;
-        if(preg_match("~<tr><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td></tr>~", $line, $val)){
+        if (preg_match("~<tr><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td></tr>~", $line, $val)) {
             $info_arr[$cat][$val[1]] = $val[2];
         }
-        elseif(preg_match("~<tr><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td></tr>~", $line, $val)){
+        elseif (preg_match("~<tr><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td></tr>~", $line, $val)) {
             $info_arr[$cat][$val[1]] = array("local" => $val[2], "master" => $val[3]);
         }
     }
@@ -103,15 +103,15 @@ function addProject($result, $file) {
     global $projectsListIgnore;
     if ((!isset($array["projects"]["w-".slugify($file)]))&& !in_array(slugify($file), $projectsListIgnore)) {
         $result["projects"]["w-".slugify($file)] = array(
-            'Alias' => slugify($file),
-            "Color" => "success",
-            "Image" => "0",
-            "Badges" => [],
-            "DEV" => "",
-            "PREPROD" => "",
-            "PROD" => "",
-            "Description" => "",
-            "Favorites" => []
+            'Alias'         => slugify($file),
+            "Color"         => "success",
+            "Image"         => "0",
+            "Badges"        => [],
+            "DEV"           => "",
+            "PREPROD"       => "",
+            "PROD"          => "",
+            "Description"   => "",
+            "Favorites"     => []
         );
     }
     return $result;
@@ -166,7 +166,7 @@ $data = json_decode($json, true);
 $langue = $data['langue'];
 $table = phpinfo_array();
 
-if(isset($_GET["add"])) {
+if (isset($_GET["add"])) {
     $generated = "Rand_index_".count($data["projects"]);
      if (!isset($data["projects"][$generated])) {
         $data["projects"][$generated] = array(
@@ -177,13 +177,13 @@ if(isset($_GET["add"])) {
         );
     }
 }
-if(isset($_GET["sync_www"])) {
+if (isset($_GET["sync_www"])) {
     $data = sync_www($data);
 }
-if(isset($_GET["sync_alias"])) {
+if (isset($_GET["sync_alias"])) {
     sync_alias($default_json);
 }
-if(isset($_GET["sync_vhost"])) {
+if (isset($_GET["sync_vhost"])) {
     sync_vhost($default_json);
 }
 
@@ -202,7 +202,7 @@ function saveConfiguration()
     $data["favorites"] = $_POST["favorites"];
     $data["projects"] = $_POST["projects"];
     foreach ($data["projects"] as $project_key => $project) {
-        if(!isset($project["Alias"]) || $project["Alias"] == "") {
+        if (!isset($project["Alias"]) || $project["Alias"] == "") {
             unset($data["projects"][$project_key]);
         }
     }
@@ -426,9 +426,7 @@ function updateConfig($json, $create = false)
                     </i>
                 </h6>
                 <p>
-                    [<a href="?sync_www" class="btn btn-sm btn-grey">Sync WWW</a>] -
-                    [<a href="?sync_alias" class="btn btn-sm btn-grey">Sync ALIAS</a>] -
-                    [<a href="?sync_vhost" class="btn btn-sm btn-grey">Sync VHOST</a>]
+                    [<a href="?sync_www" class="btn btn-sm btn-grey">Sync WWW</a>]
                 </p>
             </div>
         </section>
@@ -492,102 +490,6 @@ function updateConfig($json, $create = false)
             <div class="container main-part">
                 <div id="accordion" class="accordion" role="tablist" aria-multiselectable="true">
                     <div class="card">
-                        <div class="card-header" role="tab" id="headingOne">
-                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                Apache
-                            </a>
-                        </div>
-
-                        <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne">
-                            <div class="card-block">
-                                <div id="accordion2" class="accordion" role="tablist" aria-multiselectable="true">
-                                    <div class="card">
-                                        <div class="card-header" role="tab" id="headingOne1">
-                                            <a data-toggle="collapse" data-parent="#accordion2" href="#collapseOne1" aria-expanded="false" aria-controls="collapseOne1">
-                                                Apache
-                                            </a>
-                                        </div>
-                                        <div id="collapseOne1" class="collapse" role="tabpanel" aria-labelledby="headingOne1">
-                                            <div class="card-block">
-                                                <table class="table table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Key</th>
-                                                            <th>Value</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>reprehenderit</td>
-                                                            <td>pariatur</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>officia</td>
-                                                            <td>Anim</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>accusamus</td>
-                                                            <td>richardson</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card">
-                                        <div class="card-header" role="tab" id="headingTwo1">
-                                            <a class="collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo1" aria-expanded="false" aria-controls="collapseTwo1">
-                                                MySQL
-                                            </a>
-                                        </div>
-                                        <div id="collapseTwo1" class="collapse" role="tabpanel" aria-labelledby="headingTwo1">
-                                            <div class="card-block">
-                                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card">
-                                        <div class="card-header" role="tab" id="headingThree1">
-                                            <a class="collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree1" aria-expanded="false" aria-controls="collapseThree1">
-                                                PHP
-                                            </a>
-                                        </div>
-                                        <div id="collapseThree1" class="collapse" role="tabpanel" aria-labelledby="headingThree1">
-                                            <div class="card-block">
-                                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header" role="tab" id="headingTwo">
-                            <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                MySQL
-                            </a>
-                        </div>
-                        <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
-                            <div class="card-block">
-                                <table class="table table-striped table-inverse">
-                                    <thead class="thead-inverse">
-                                        <tr>
-                                            <th>Key</th>
-                                            <th>Value</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr><th scope="row">Host Info</th><td><?php echo mysql_get_host_info(); ?></td></tr>
-                                        <tr><th scope="row">Client Info</th><td><?php echo mysql_get_client_info(); ?></td></tr>
-                                        <tr><th scope="row">Proto Info</th><td><?php echo mysql_get_proto_info(); ?></td></tr>
-                                        <tr><th scope="row">Server Info</th><td><?php echo mysql_get_server_info(); ?></td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
                         <div class="card-header" role="tab" id="headingThree">
                             <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                                 PHP
@@ -650,6 +552,31 @@ function updateConfig($json, $create = false)
                                     </div>
                                     <?php } ?>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header" role="tab" id="headingTwo">
+                            <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                MySQL
+                            </a>
+                        </div>
+                        <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
+                            <div class="card-block">
+                                <table class="table table-sm">
+                                    <thead class="thead-default">
+                                        <tr>
+                                            <th>Key</th>
+                                            <th>Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><th scope="row">Host Info</th><td><?php echo mysql_get_host_info(); ?></td></tr>
+                                        <tr><th scope="row">Client Info</th><td><?php echo mysql_get_client_info(); ?></td></tr>
+                                        <tr><th scope="row">Proto Info</th><td><?php echo mysql_get_proto_info(); ?></td></tr>
+                                        <tr><th scope="row">Server Info</th><td><?php echo mysql_get_server_info(); ?></td></tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
