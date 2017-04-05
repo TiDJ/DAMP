@@ -3,7 +3,15 @@ include("config.php");
 
 // Not in config.json for security reasons, refere to config.php
 $mysql_version = "Unknown";
-if (@mysql_connect(MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD)) {
+$php_testing_version = phpversion();
+$php_testing_version = substr($php_testing_version,0,1 );
+
+if( $php_testing_version=="7") {
+    $mysqli = mysqli_connect(MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD);
+    if (!mysqli_connect_errno()) {
+        $mysql_version = mysqli_get_server_info($mysqli);
+    }
+} else if (@mysql_connect(MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD)) {
     $mysql_version = mysql_get_server_info();
 } else {
     preg_match("([0-9\.]+)", @mysqli_get_server_info(), $match);
@@ -397,7 +405,7 @@ function updateConfig($json, $create = false)
                 </h6>
                 <p>
                     [<a href="?sync_www" class="btn btn-sm btn-grey">Sync WWW</a>]
-                    [<a href="?sync_alias" class="btn btn-sm btn-grey">Sync Alias</a>]
+                    [<a href="?sync_alias" class="btn btn-sm btn-grey">Sync ALIAS</a>]
                 </p>
             </div>
         </section>
