@@ -95,6 +95,60 @@ function sync_www($array)
 }
 
 /**
+ * [sync_alias description]
+ * @param  [type] $array [description]
+ * @return [type]        [description]
+ */
+function sync_alias($array)
+{
+    $alias = clearAlias(glob(WAMP_PATH.'alias/*.conf'));
+    $result = $array;
+    foreach($alias as $projectName) {
+        $result = addProject($result, $projectName);
+    }
+    return $result;
+}
+
+/**
+ * [clearAlias description]
+ * @param  [type] $alias [description]
+ * @return [type]        [description]
+ */
+function clearAlias($alias)
+{
+    global $projectsListIgnore;
+    $projects_list = array();
+    foreach ($alias as &$project) {
+        $projectName = explode('/', $project);
+        $projectName = substr($projectName[count($projectName) - 1], 0, -1 * strlen('.conf'));
+        if(!in_array($projectName, $projectsListIgnore)) {
+            $projects_list[] = $projectName;
+        }
+    }
+    return $projects_list;
+}
+
+/**
+ * [getAliasUrl description]
+ * @param  [type] $path [description]
+ * @return [type]       [description]
+ */
+function getAliasUrl($path)
+{
+    $handle = @fopen($path, 'r');
+    if ($handle) {
+        while (($buffer = fgets($handle)) !== false) {
+            if (preg_match('#alias (.*) ".*"#i', $buffer, $match)) {
+                fclose($handle);
+                return ($match[1]);
+            }
+        }
+        fclose($handle);
+    }
+    return null;
+}
+
+/**
  * [addProject description]
  * @param [type] $result [description]
  * @param [type] $file   [description]
@@ -181,13 +235,13 @@ if (isset($_GET["sync_www"])) {
     $data = sync_www($data);
 }
 if (isset($_GET["sync_alias"])) {
-    sync_alias($default_json);
-}
-if (isset($_GET["sync_vhost"])) {
-    sync_vhost($default_json);
+    $data = sync_alias($data);
 }
 
-
+// Coming soon
+// if (isset($_GET["sync_vhost"])) {
+    // sync_vhost($default_json);
+// }
 
 // Launch saveConfiguration function
 if ((isset($_POST))&&($_POST!=array()))  saveConfiguration();
@@ -343,6 +397,7 @@ function updateConfig($json, $create = false)
                 </h6>
                 <p>
                     [<a href="?sync_www" class="btn btn-sm btn-grey">Sync WWW</a>]
+                    [<a href="?sync_alias" class="btn btn-sm btn-grey">Sync Alias</a>]
                 </p>
             </div>
         </section>
