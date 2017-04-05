@@ -6,6 +6,7 @@ $mysql_version = "Unknown";
 $php_testing_version = phpversion();
 $php_testing_version = substr($php_testing_version,0,1 );
 
+// Search for the MySQL Version
 if( $php_testing_version=="7") {
     $mysqli = mysqli_connect(MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD);
     if (!mysqli_connect_errno()) {
@@ -60,8 +61,8 @@ $messages = array(
 );
 
 /**
- * [phpinfo_array description]
- * @return [type] [description]
+ * PHP informations processing
+ * @return Array    $info_arr  All PHP retrievable informations
  */
 function phpinfo_array()
 {
@@ -84,9 +85,9 @@ function phpinfo_array()
 }
 
 /**
- * [sync_www description]
- * @param  [type] $array [description]
- * @return [type]        [description]
+ * Add every projects depending on folder's names available in the WWW_DIR folder (see config.php)
+ * @param  Array    $array   Conf JSON translated in PHP
+ * @return Array    $result  Conf JSON translated in PHP and completed
  */
 function sync_www($array)
 {
@@ -103,9 +104,9 @@ function sync_www($array)
 }
 
 /**
- * [sync_alias description]
- * @param  [type] $array [description]
- * @return [type]        [description]
+* Add every projects depending on alias's names available in the WAMP_PATH folder (see config.php)
+* @param  Array    $array   Conf JSON translated in PHP
+* @return Array    $result  Conf JSON translated in PHP and completed
  */
 function sync_alias($array)
 {
@@ -118,9 +119,9 @@ function sync_alias($array)
 }
 
 /**
- * [clearAlias description]
- * @param  [type] $alias [description]
- * @return [type]        [description]
+* Clear aliases to get only the name
+* @param  Array    $alias           Every .conf in WAMP_PATH/alias
+* @return Array    $projects_list   List of projects names
  */
 function clearAlias($alias)
 {
@@ -137,29 +138,10 @@ function clearAlias($alias)
 }
 
 /**
- * [getAliasUrl description]
- * @param  [type] $path [description]
- * @return [type]       [description]
- */
-function getAliasUrl($path)
-{
-    $handle = @fopen($path, 'r');
-    if ($handle) {
-        while (($buffer = fgets($handle)) !== false) {
-            if (preg_match('#alias (.*) ".*"#i', $buffer, $match)) {
-                fclose($handle);
-                return ($match[1]);
-            }
-        }
-        fclose($handle);
-    }
-    return null;
-}
-
-/**
- * [addProject description]
- * @param [type] $result [description]
- * @param [type] $file   [description]
+* Try to add a project in conf
+* @param  String   $result     Conf JSON translated in PHP
+* @param  String   $file       Name of the project to create
+* @return Array    $result     Conf JSON translated in PHP and completed
  */
 function addProject($result, $file) {
     global $projectsListIgnore;
@@ -180,9 +162,9 @@ function addProject($result, $file) {
 }
 
 /**
- * [slugify description]
- * @param  [type] $text [description]
- * @return [type]       [description]
+* Slugify a text
+* @param  String   $text     Basic string
+* @return Array    $text     Slugiflied string
  */
 function slugify($text)
 {
@@ -244,9 +226,10 @@ if (isset($_GET["sync_www"])) {
 }
 if (isset($_GET["sync_alias"])) {
     $data = sync_alias($data);
+    // TODO : Add Alias URL direct link ( dev,preprod or prod)
 }
 
-// Coming soon
+// TODO : Add Sync Vhost
 // if (isset($_GET["sync_vhost"])) {
     // sync_vhost($default_json);
 // }
@@ -255,8 +238,7 @@ if (isset($_GET["sync_alias"])) {
 if ((isset($_POST))&&($_POST!=array()))  saveConfiguration();
 
 /**
- * [saveConfiguration description]
- * @return [type] [description]
+* Update the conf array
  */
 function saveConfiguration()
 {
@@ -274,8 +256,8 @@ function saveConfiguration()
 
 /**
  * Try to echo a variable
- * @param [type] $value   [description]
- * @param [type] $default [description]
+ * @param String    $value   Default value
+ * @param String    $default Translated value
  */
 function echoIfIsset(&$value, $default = null)
 {
@@ -283,10 +265,10 @@ function echoIfIsset(&$value, $default = null)
 }
 
 /**
- * [compareIfIsset description]
- * @param [type] $value        [description]
- * @param [type] $compareTo    [description]
- * @param [type] $returnIfTrue [description]
+ * Compare two values
+ * @param String    $value        Default value
+ * @param String    $compareTo    Value to compare to
+ * @param String    $returnIfTrue Returned string
  */
 function compareIfIsset(&$value, $compareTo, $returnIfTrue)
 {
@@ -295,8 +277,8 @@ function compareIfIsset(&$value, $compareTo, $returnIfTrue)
 
 /**
  * Try to translate a string via the $messages file in the $langue language
- * @param  [type] $string [description]
- * @return [type]         [description]
+ * @param String    $value   Default value
+ * @param String    $default Translated value
  */
 function e_($string)
 {
@@ -310,8 +292,8 @@ function e_($string)
 
 /**
  * Update the config.json file
- * @param  [type] $json [description]
- * @return [type]       [description]
+ * @param  String       $json     Conf JSON translated in PHP
+ * @param  Boolean      $create   Create the JSON
  */
 function updateConfig($json, $create = false)
 {
