@@ -19,6 +19,7 @@ if( $php_testing_version=="7") {
     $mysql_version = isset($match[0]) ? $match[0] : "Unknown";
 }
 $projectsListIgnore = explode(",",IGNORED_PROJECTS);
+$custom_vhost_path_config = CUSTOM_VHOST_PATH_CONFIG;
 
 // Translation, in English if not found
 $messages = array(
@@ -108,15 +109,116 @@ function sync_www($array)
 * @param  Array    $array   Conf JSON translated in PHP
 * @return Array    $result  Conf JSON translated in PHP and completed
  */
-function sync_alias($array)
-{
-    $alias = clearAlias(glob(WAMP_PATH.'alias/*.conf'));
-    $result = $array;
-    foreach($alias as $projectName) {
-        $result = addProject($result, $projectName);
-    }
-    return $result;
-}
+ function sync_alias($array)
+ {
+     $alias = clearAlias(glob(WAMP_PATH.'alias/*.conf'));
+     echo "<pre>".print_r($alias,1)."</pre>";die;
+     $result = $array;
+     foreach($alias as $projectName) {
+         $result = addProject($result, $projectName);
+     }
+     return $result;
+ }
+
+ /**
+ * Add every projects depending on vhosts's file available in CUSTOM_VHOST_PATH_CONFIG (see config.php)
+ * @param  Array    $array   Conf JSON translated in PHP
+ * @return Array    $result  Conf JSON translated in PHP and completed
+  */
+ function sync_vhost($array)
+ {
+     $alias = getVhostsDetails();
+     $result = $array;
+     foreach($alias as $projectName) {
+         $result = addProject($result, $projectName);
+     }
+     return $result;
+ }
+
+/**
+ * Search for enabled Vhost
+ * @param  String $httpd_conf   File URL of httpd_conf
+ * @return Boolean              Return true or false
+ */
+ function vhostIsEnable($httpd_conf)
+ {
+     $return = true;
+     $handle = @fopen($httpd_conf, 'r');
+     if ($handle) {
+         while (($buffer = fgets($handle)) !== false) {
+             $buffer = trim($buffer);
+             if (preg_match('#LoadModule vhost_alias_module modules/mod_vhost_alias.so#i', $buffer, $match)) {
+                 if (substr($buffer, 0, 1) == '#') {
+                     $return = false;
+                 }
+             } elseif ($buffer == 'Include "'.WAMP_PATH.'vhost\*.conf"') {
+                 $GLOBALS['vhost_include_not_define'] = false;
+             }
+         }
+         fclose($handle);
+     }
+     return $return;
+ }
+
+/**
+ * Get the URL of a project, not used at the moment
+ * @param  String $vhost    Vhost config file content
+ * @return String           URL or Null
+ */
+ function getVhostUrl($vhost)
+ {
+     if (preg_match('#ServerName\s+(.*)#i', $vhost, $match)) {
+         return 'http://'.$match[1].'/';
+     }
+     return null;
+ }
+
+/**
+ * Return vhost name and url soon
+ * @param  String $vhost_config_path    Path of the config file
+ * @return Array                        Array of projects names
+ */
+ function getVhosts($vhost_config_path)
+ {
+     $vhost_config_path = glob($vhost_config_path)[0];
+     $vhost_config_path = realpath($vhost_config_path);
+     $content = file_get_contents($vhost_config_path);
+     preg_match_all('#<VirtualHost[^>]+>(.+)<\/VirtualHost>#sU', $content, $matches);
+
+     $structure = array();
+     foreach ($matches[1] as $vhost) {
+         $url =  getVhostUrl($vhost);
+         $structure[] = substr($url, 7, -1);
+     }
+
+     return $structure;
+ }
+
+/**
+ * Search every vhosts
+ * @return Array Liste of vhosts names
+ */
+ function getVhostsDetails() {
+     $vhost_include_not_define = true;
+     $custom_vhost_path_config = CUSTOM_VHOST_PATH_CONFIG;;
+     if (($apache_conf = glob(WAMP_PATH.'bin/apache/apache*/conf/httpd.conf')) > 0 || $custom_vhost_path_config) {
+         $apache_conf = realpath(isset($apache_conf[0]) ? $apache_conf[0] : null);
+
+         $custom_vhost_path_config_true = isset( $custom_vhost_path_config) ? 1:0;
+
+         if ( $vhostIsEnable = ( (vhostIsEnable($apache_conf)==1) ||($custom_vhost_path_config_true==1)  ) ? 1:0 ){
+             $vhosts_path = isset($custom_vhost_path_config)
+                 ? array($custom_vhost_path_config)
+                 : glob(WAMP_PATH.'vhost/*.conf');
+
+             $vhosts = array();
+             foreach ($vhosts_path as &$vhost) {
+                 $vhosts = array_merge($vhosts, getVhosts($vhost));
+             }
+         }
+     }
+     return $vhosts;
+ }
 
 /**
 * Clear aliases to get only the name
@@ -229,10 +331,9 @@ if (isset($_GET["sync_alias"])) {
     // TODO : Add Alias URL direct link ( dev,preprod or prod)
 }
 
-// TODO : Add Sync Vhost
-// if (isset($_GET["sync_vhost"])) {
-    // sync_vhost($default_json);
-// }
+if (isset($_GET["sync_vhost"])) {
+    $data = sync_vhost($data);
+}
 
 // Launch saveConfiguration function
 if ((isset($_POST))&&($_POST!=array()))  saveConfiguration();
