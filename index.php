@@ -112,7 +112,6 @@ function sync_www($array)
  function sync_alias($array)
  {
      $alias = clearAlias(glob(WAMP_PATH.'alias/*.conf'));
-     echo "<pre>".print_r($alias,1)."</pre>";die;
      $result = $array;
      foreach($alias as $projectName) {
          $result = addProject($result, $projectName);
