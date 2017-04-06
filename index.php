@@ -489,6 +489,7 @@ function updateConfig($json, $create = false)
                 <p>
                     [<a href="?sync_www" class="btn btn-sm btn-grey">Sync WWW</a>]
                     [<a href="?sync_alias" class="btn btn-sm btn-grey">Sync ALIAS</a>]
+                    [<a href="?sync_vhost" class="btn btn-sm btn-grey">Sync VHOST</a>]
                 </p>
             </div>
         </section>
