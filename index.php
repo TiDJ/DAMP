@@ -637,10 +637,17 @@ function updateConfig($json, $create = false)
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr><th scope="row">Host Info</th><td><?php echo mysql_get_host_info(); ?></td></tr>
-                                        <tr><th scope="row">Client Info</th><td><?php echo mysql_get_client_info(); ?></td></tr>
-                                        <tr><th scope="row">Proto Info</th><td><?php echo mysql_get_proto_info(); ?></td></tr>
-                                        <tr><th scope="row">Server Info</th><td><?php echo mysql_get_server_info(); ?></td></tr>
+                                        <?php if( $php_testing_version=="7"): ?>
+                                            <tr><th scope="row">Host Info</th><td><?php echo mysqli_get_host_info($mysqli); ?></td></tr>
+                                            <tr><th scope="row">Client Info</th><td><?php echo mysqli_get_client_info(); ?></td></tr>
+                                            <tr><th scope="row">Proto Info</th><td><?php echo mysqli_get_proto_info($mysqli); ?></td></tr>
+                                            <tr><th scope="row">Server Info</th><td><?php echo mysqli_get_server_info($mysqli); ?></td></tr>
+                                        <?php else : ?>
+                                            <tr><th scope="row">Host Info</th><td><?php echo mysql_get_host_info(); ?></td></tr>
+                                            <tr><th scope="row">Client Info</th><td><?php echo mysql_get_client_info(); ?></td></tr>
+                                            <tr><th scope="row">Proto Info</th><td><?php echo mysql_get_proto_info(); ?></td></tr>
+                                            <tr><th scope="row">Server Info</th><td><?php echo mysql_get_server_info(); ?></td></tr>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
