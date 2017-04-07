@@ -97,7 +97,7 @@ function sync_www($array)
     $projectContents = '';
     while ($file = readdir($handle)) {
         if (is_dir("../".$file)) {
-            $result = addProject($result, $file);
+            $result = addProject($result, $file, $array);
         }
     }
     closedir($handle);
@@ -114,7 +114,7 @@ function sync_www($array)
      $alias = clearAlias(glob(WAMP_PATH.'alias/*.conf'));
      $result = $array;
      foreach($alias as $projectName) {
-         $result = addProject($result, $projectName);
+         $result = addProject($result, $projectName, $array);
      }
      return $result;
  }
@@ -129,7 +129,7 @@ function sync_www($array)
      $alias = getVhostsDetails();
      $result = $array;
      foreach($alias as $projectName) {
-         $result = addProject($result, $projectName);
+         $result = addProject($result, $projectName, $array);
      }
      return $result;
  }
@@ -244,7 +244,7 @@ function clearAlias($alias)
 * @param  String   $file       Name of the project to create
 * @return Array    $result     Conf JSON translated in PHP and completed
  */
-function addProject($result, $file) {
+function addProject($result, $file, $array) {
     global $projectsListIgnore;
     if ((!isset($array["projects"]["w-".slugify($file)]))&& !in_array(slugify($file), $projectsListIgnore)) {
         $result["projects"]["w-".slugify($file)] = array(
@@ -335,7 +335,9 @@ if (isset($_GET["sync_vhost"])) {
 }
 
 // Launch saveConfiguration function
-if ((isset($_POST))&&($_POST!=array()))  saveConfiguration();
+if ((isset($_POST))&&($_POST!=array())) {
+    saveConfiguration();
+}
 
 /**
 * Update the conf array
@@ -496,54 +498,56 @@ function updateConfig($json, $create = false)
         <div id="projects">
             <div class="container">
                 <div class="card-columns">
-                    <?php foreach($data['projects'] as $projects_name => $projects_element){ ?>
-                        <div class="card">
-                            <?php if((isset($projects_element['Image']))&&($projects_element['Image'])): ?>
-                                <img class="card-img-top" style="width: 100%; display: block;" src="thumbnails/<?php echo slugify($projects_element['Alias']) ?>.jpg" alt="<?php echo slugify($projects_element['Alias']) ?>">
-                            <?php endif; ?>
-                            <div class="card-block card-header-title card-default text-center" style="color:white;">
-                                <h3 class="card-title"><?php echoIfIsset($projects_element['Alias'], $projects_name); ?></h3>
-                                <p class="card-text"><?php echoIfIsset($projects_element['Description']); ?></p>
-                                <?php if(!empty($projects_element['DEV'])): ?>
-                                    <a target="_blank" data-toggle="tooltip" data-placement="top" title="<?php echoIfIsset($projects_element['DEV']); ?>" href="<?php echoIfIsset($projects_element['DEV']); ?>" class="btn btn-sm btn-<?php echoIfIsset($projects_element['Color'], "default"); ?>">DEV</a>
+                    <?php if (is_array($data['projects'])) : ?>
+                        <?php foreach ($data['projects'] as $projects_name => $projects_element) : ?>
+                            <div class="card">
+                                <?php if((isset($projects_element['Image']))&&($projects_element['Image'])): ?>
+                                    <img class="card-img-top" style="width: 100%; display: block;" src="thumbnails/<?php echo slugify($projects_element['Alias']) ?>.jpg" alt="<?php echo slugify($projects_element['Alias']) ?>">
                                 <?php endif; ?>
-                                <?php if(!empty($projects_element['PREPROD'])): ?>
-                                    <a target="_blank" data-toggle="tooltip" data-placement="top" title="<?php echoIfIsset($projects_element['PREPROD']); ?>" href="<?php echoIfIsset($projects_element['PREPROD']); ?>" class="btn btn-sm btn-<?php echoIfIsset($projects_element['Color'], "default"); ?>">PREPROD</a>
-                                <?php endif; ?>
-                                <?php if(!empty($projects_element['PROD'])): ?>
-                                    <a target="_blank" data-toggle="tooltip" data-placement="top" title="<?php echoIfIsset($projects_element['PROD']); ?>" href="<?php echoIfIsset($projects_element['PROD']); ?>" class="btn btn-sm btn-<?php echoIfIsset($projects_element['Color'], "default"); ?>">PROD</a>
+                                <div class="card-block card-header-title card-default text-center" style="color:white;">
+                                    <h3 class="card-title"><?php echoIfIsset($projects_element['Alias'], $projects_name); ?></h3>
+                                    <p class="card-text"><?php echoIfIsset($projects_element['Description']); ?></p>
+                                    <?php if(!empty($projects_element['DEV'])): ?>
+                                        <a target="_blank" data-toggle="tooltip" data-placement="top" title="<?php echoIfIsset($projects_element['DEV']); ?>" href="<?php echoIfIsset($projects_element['DEV']); ?>" class="btn btn-sm btn-<?php echoIfIsset($projects_element['Color'], "default"); ?>">DEV</a>
+                                    <?php endif; ?>
+                                    <?php if(!empty($projects_element['PREPROD'])): ?>
+                                        <a target="_blank" data-toggle="tooltip" data-placement="top" title="<?php echoIfIsset($projects_element['PREPROD']); ?>" href="<?php echoIfIsset($projects_element['PREPROD']); ?>" class="btn btn-sm btn-<?php echoIfIsset($projects_element['Color'], "default"); ?>">PREPROD</a>
+                                    <?php endif; ?>
+                                    <?php if(!empty($projects_element['PROD'])): ?>
+                                        <a target="_blank" data-toggle="tooltip" data-placement="top" title="<?php echoIfIsset($projects_element['PROD']); ?>" href="<?php echoIfIsset($projects_element['PROD']); ?>" class="btn btn-sm btn-<?php echoIfIsset($projects_element['Color'], "default"); ?>">PROD</a>
+                                    <?php endif; ?>
+                                </div>
+                                <?php $array_testing = array_filter($projects_element['Badges']); ?>
+                                <?php $favorites = $projects_element['Favorites'];
+                                $isEmptyFavorites = array();
+                                foreach ($favorites as $favorite) {
+                                    $isEmptyFavorites[] = array_filter($favorite);
+                                }
+                                $isEmptyFavorites = array_filter($isEmptyFavorites);
+                                ?>
+                                <?php if((!empty($array_testing))||(!empty($isEmptyFavorites ))): ?>
+                                    <div class="card-block text-center">
+                                        <?php if(!empty($array_testing)): ?>
+                                            <span class="badge badge-pill badge-default"><?php echoIfIsset($projects_element['Badges'][0]); ?></span>
+                                            <span class="badge badge-pill badge-default"><?php echoIfIsset($projects_element['Badges'][1]); ?></span>
+                                            <span class="badge badge-pill badge-default"><?php echoIfIsset($projects_element['Badges'][2]); ?></span>
+                                            <span class="badge badge-pill badge-default"><?php echoIfIsset($projects_element['Badges'][3]); ?></span>
+                                            <span class="badge badge-pill badge-default"><?php echoIfIsset($projects_element['Badges'][4]); ?></span>
+                                        <?php endif; ?>
+                                        <?php foreach($projects_element['Favorites'] as $favorite): ?>
+                                            <?php if($favorite['title'] != ""): ?>
+                                                <span class="badge badge-pill badge-link">
+                                                    <a data-toggle="tooltip" data-placement="bottom" title="<?php echoIfIsset($favorite['link']); ?>" target="_blank" href="<?php echoIfIsset($favorite['link']); ?>">
+                                                        <?php echoIfIsset($favorite['title']); ?>
+                                                    </a>
+                                                </span>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    </div>
                                 <?php endif; ?>
                             </div>
-                            <?php $array_testing = array_filter($projects_element['Badges']); ?>
-                            <?php $favorites = $projects_element['Favorites'];
-                            $isEmptyFavorites = array();
-                            foreach ($favorites as $favorite) {
-                                $isEmptyFavorites[] = array_filter($favorite);
-                            }
-                            $isEmptyFavorites = array_filter($isEmptyFavorites);
-                            ?>
-                            <?php if((!empty($array_testing))||(!empty($isEmptyFavorites ))): ?>
-                                <div class="card-block text-center">
-                                    <?php if(!empty($array_testing)): ?>
-                                        <span class="badge badge-pill badge-default"><?php echoIfIsset($projects_element['Badges'][0]); ?></span>
-                                        <span class="badge badge-pill badge-default"><?php echoIfIsset($projects_element['Badges'][1]); ?></span>
-                                        <span class="badge badge-pill badge-default"><?php echoIfIsset($projects_element['Badges'][2]); ?></span>
-                                        <span class="badge badge-pill badge-default"><?php echoIfIsset($projects_element['Badges'][3]); ?></span>
-                                        <span class="badge badge-pill badge-default"><?php echoIfIsset($projects_element['Badges'][4]); ?></span>
-                                    <?php endif; ?>
-                                    <?php foreach($projects_element['Favorites'] as $favorite): ?>
-                                        <?php if($favorite['title'] != ""): ?>
-                                            <span class="badge badge-pill badge-link">
-                                                <a data-toggle="tooltip" data-placement="bottom" title="<?php echoIfIsset($favorite['link']); ?>" target="_blank" href="<?php echoIfIsset($favorite['link']); ?>">
-                                                    <?php echoIfIsset($favorite['title']); ?>
-                                                </a>
-                                            </span>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                    <?php } ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -683,86 +687,88 @@ function updateConfig($json, $create = false)
                                 </div>
                             </div>
                             <div id="sortableParameters">
-                                <?php foreach($data['projects'] as $projects_name => $projects_element){ ?>
-                                    <div class="card">
-                                        <div class="card-header" role="tab" id="hp<?php echo $projects_name ?>">
-                                            <a class="collapsed" data-toggle="collapse" data-parent="#parameters" href="#c<?php echo $projects_name ?>" aria-expanded="false" aria-controls="c<?php echo $projects_name ?>">
-                                                [PROJECTS] <?php echoIfIsset($projects_element['Alias'], $projects_name); ?>
-                                            </a>
-                                        </div>
-                                        <div id="c<?php echo $projects_name ?>" class="collapse " role="tabpanel" aria-labelledby="hp<?php echo $projects_name ?>">
-                                            <div class="card-block">
-                                                <div class="form-group row">
-                                                    <label for="example-text-input" class="col-2 col-form-label"><?php e_("Project's name") ?></label>
-                                                    <div class="col-md-4">
-                                                        <input type="text" value="<?php echoIfIsset($projects_element['Alias']); ?>" name="projects[<?php echo $projects_name ?>][Alias]" class="form-control" placeholder="Name, deleted if empty">
+                                <?php if (is_array($data['projects'])) : ?>
+                                    <?php foreach($data['projects'] as $projects_name => $projects_element) : ?>
+                                        <div class="card">
+                                            <div class="card-header" role="tab" id="hp<?php echo $projects_name ?>">
+                                                <a class="collapsed" data-toggle="collapse" data-parent="#parameters" href="#c<?php echo $projects_name ?>" aria-expanded="false" aria-controls="c<?php echo $projects_name ?>">
+                                                    [PROJECTS] <?php echoIfIsset($projects_element['Alias'], $projects_name); ?>
+                                                </a>
+                                            </div>
+                                            <div id="c<?php echo $projects_name ?>" class="collapse " role="tabpanel" aria-labelledby="hp<?php echo $projects_name ?>">
+                                                <div class="card-block">
+                                                    <div class="form-group row">
+                                                        <label for="example-text-input" class="col-2 col-form-label"><?php e_("Project's name") ?></label>
+                                                        <div class="col-md-4">
+                                                            <input type="text" value="<?php echoIfIsset($projects_element['Alias']); ?>" name="projects[<?php echo $projects_name ?>][Alias]" class="form-control" placeholder="Name, deleted if empty">
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <select class="form-control" name="projects[<?php echo $projects_name ?>][Color]">
+                                                                <option <?php compareIfIsset($projects_element['Color'], "default", "selected") ?> value="default"><?php e_("Default"); ?></option>
+                                                                <option <?php compareIfIsset($projects_element['Color'], "success", "selected") ?> value="success"><?php e_("Finished"); ?></option>
+                                                                <option <?php compareIfIsset($projects_element['Color'], "primary", "selected") ?> value="primary"><?php e_("Personnal"); ?></option>
+                                                                <option <?php compareIfIsset($projects_element['Color'], "danger", "selected") ?> value="danger"><?php e_("Professional"); ?></option>
+                                                                <option <?php compareIfIsset($projects_element['Color'], "warning", "selected") ?> value="warning"><?php e_("Others"); ?></option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <select class="form-control" name="projects[<?php echo $projects_name ?>][Image]">
+                                                                <option <?php compareIfIsset($projects_element['Image'], true, "selected") ?> value="1">Image</option>
+                                                                <option <?php compareIfIsset($projects_element['Image'], false, "selected") ?> value="0">No image</option>
+                                                            </select>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-md-3">
-                                                        <select class="form-control" name="projects[<?php echo $projects_name ?>][Color]">
-                                                            <option <?php compareIfIsset($projects_element['Color'], "default", "selected") ?> value="default"><?php e_("Default"); ?></option>
-                                                            <option <?php compareIfIsset($projects_element['Color'], "success", "selected") ?> value="success"><?php e_("Finished"); ?></option>
-                                                            <option <?php compareIfIsset($projects_element['Color'], "primary", "selected") ?> value="primary"><?php e_("Personnal"); ?></option>
-                                                            <option <?php compareIfIsset($projects_element['Color'], "danger", "selected") ?> value="danger"><?php e_("Professional"); ?></option>
-                                                            <option <?php compareIfIsset($projects_element['Color'], "warning", "selected") ?> value="warning"><?php e_("Others"); ?></option>
-                                                        </select>
+                                                    <div class="form-group row">
+                                                        <label for="example-text-input" class="col-2 col-form-label"><?php e_("Project's badges") ?></label>
+                                                        <div class="col-md-2">
+                                                            <input type="text" value="<?php echoIfIsset($projects_element['Badges'][0]); ?>" name="projects[<?php echo $projects_name ?>][Badges][0]" class="form-control" placeholder="Badge 1">
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <input type="text" value="<?php echoIfIsset($projects_element['Badges'][1]); ?>" name="projects[<?php echo $projects_name ?>][Badges][1]" class="form-control" placeholder="Badge 2">
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <input type="text" value="<?php echoIfIsset($projects_element['Badges'][2]); ?>" name="projects[<?php echo $projects_name ?>][Badges][2]" class="form-control" placeholder="Badge 3">
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <input type="text" value="<?php echoIfIsset($projects_element['Badges'][3]); ?>" name="projects[<?php echo $projects_name ?>][Badges][3]" class="form-control" placeholder="Badge 4">
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <input type="text" value="<?php echoIfIsset($projects_element['Badges'][4]); ?>" name="projects[<?php echo $projects_name ?>][Badges][4]" class="form-control" placeholder="Badge 5">
+                                                        </div>
                                                     </div>
-                                                    <div class="col-md-3">
-                                                        <select class="form-control" name="projects[<?php echo $projects_name ?>][Image]">
-                                                            <option <?php compareIfIsset($projects_element['Image'], true, "selected") ?> value="1">Image</option>
-                                                            <option <?php compareIfIsset($projects_element['Image'], false, "selected") ?> value="0">No image</option>
-                                                        </select>
+                                                    <div class="form-group row">
+                                                        <label for="example-text-input" class="col-2 col-form-label"><?php e_("Project's URL") ?></label>
+                                                        <div class="col-md-3"><input type="text" value="<?php echoIfIsset($projects_element['DEV']); ?>" name="projects[<?php echo $projects_name ?>][DEV]" class="form-control" placeholder="DEV"></div>
+                                                        <div class="col-md-4"><input type="text" value="<?php echoIfIsset($projects_element['PREPROD']); ?>" name="projects[<?php echo $projects_name ?>][PREPROD]" class="form-control" placeholder="PREPROD"></div>
+                                                        <div class="col-md-3"><input type="text" value="<?php echoIfIsset($projects_element['PROD']); ?>" name="projects[<?php echo $projects_name ?>][PROD]" class="form-control" placeholder="PROD"></div>
                                                     </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <label for="example-text-input" class="col-2 col-form-label"><?php e_("Project's badges") ?></label>
-                                                    <div class="col-md-2">
-                                                        <input type="text" value="<?php echoIfIsset($projects_element['Badges'][0]); ?>" name="projects[<?php echo $projects_name ?>][Badges][0]" class="form-control" placeholder="Badge 1">
+                                                    <div class="form-group row">
+                                                        <label for="example-text-input" class="col-2 col-form-label"><?php e_("Description"); ?></label>
+                                                        <div class="col-md-10">
+                                                            <textarea name="projects[<?php echo $projects_name ?>][Description]" class="form-control" placeholder="Description" rows="3"><?php echoIfIsset($projects_element['Description']); ?></textarea>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-md-2">
-                                                        <input type="text" value="<?php echoIfIsset($projects_element['Badges'][1]); ?>" name="projects[<?php echo $projects_name ?>][Badges][1]" class="form-control" placeholder="Badge 2">
+                                                    <div class="form-group row">
+                                                        <label for="example-text-input" class="col-2 col-form-label"><?php e_("First link"); ?></label>
+                                                        <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][0]['title']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][0][title]" type="text" class="form-control" placeholder="Intitulé"></div>
+                                                        <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][0]['link']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][0][link]" type="text" class="form-control" placeholder="Lien"></div>
+                                                        <label for="example-text-input" class="col-2 col-form-label"><?php e_("Second link"); ?></label>
+                                                        <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][1]['title']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][1][title]" type="text" class="form-control" placeholder="Intitulé"></div>
+                                                        <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][1]['link']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][1][link]" type="text" class="form-control" placeholder="Lien"></div>
                                                     </div>
-                                                    <div class="col-md-2">
-                                                        <input type="text" value="<?php echoIfIsset($projects_element['Badges'][2]); ?>" name="projects[<?php echo $projects_name ?>][Badges][2]" class="form-control" placeholder="Badge 3">
+                                                    <div class="form-group row">
+                                                        <label for="example-text-input" class="col-2 col-form-label"><?php e_("Third link"); ?></label>
+                                                        <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][2]['title']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][2][title]" type="text" class="form-control" placeholder="Intitulé"></div>
+                                                        <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][2]['link']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][2][link]" type="text" class="form-control" placeholder="Lien"></div>
+                                                        <label for="example-text-input" class="col-2 col-form-label"><?php e_("Fourth link"); ?></label>
+                                                        <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][3]['title']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][3][title]" type="text" class="form-control" placeholder="Intitulé"></div>
+                                                        <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][3]['link']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][3][link]" type="text" class="form-control" placeholder="Lien"></div>
                                                     </div>
-                                                    <div class="col-md-2">
-                                                        <input type="text" value="<?php echoIfIsset($projects_element['Badges'][3]); ?>" name="projects[<?php echo $projects_name ?>][Badges][3]" class="form-control" placeholder="Badge 4">
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input type="text" value="<?php echoIfIsset($projects_element['Badges'][4]); ?>" name="projects[<?php echo $projects_name ?>][Badges][4]" class="form-control" placeholder="Badge 5">
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <label for="example-text-input" class="col-2 col-form-label"><?php e_("Project's URL") ?></label>
-                                                    <div class="col-md-3"><input type="text" value="<?php echoIfIsset($projects_element['DEV']); ?>" name="projects[<?php echo $projects_name ?>][DEV]" class="form-control" placeholder="DEV"></div>
-                                                    <div class="col-md-4"><input type="text" value="<?php echoIfIsset($projects_element['PREPROD']); ?>" name="projects[<?php echo $projects_name ?>][PREPROD]" class="form-control" placeholder="PREPROD"></div>
-                                                    <div class="col-md-3"><input type="text" value="<?php echoIfIsset($projects_element['PROD']); ?>" name="projects[<?php echo $projects_name ?>][PROD]" class="form-control" placeholder="PROD"></div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <label for="example-text-input" class="col-2 col-form-label"><?php e_("Description"); ?></label>
-                                                    <div class="col-md-10">
-                                                        <textarea name="projects[<?php echo $projects_name ?>][Description]" class="form-control" placeholder="Description" rows="3"><?php echoIfIsset($projects_element['Description']); ?></textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <label for="example-text-input" class="col-2 col-form-label"><?php e_("First link"); ?></label>
-                                                    <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][0]['title']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][0][title]" type="text" class="form-control" placeholder="Intitulé"></div>
-                                                    <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][0]['link']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][0][link]" type="text" class="form-control" placeholder="Lien"></div>
-                                                    <label for="example-text-input" class="col-2 col-form-label"><?php e_("Second link"); ?></label>
-                                                    <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][1]['title']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][1][title]" type="text" class="form-control" placeholder="Intitulé"></div>
-                                                    <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][1]['link']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][1][link]" type="text" class="form-control" placeholder="Lien"></div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <label for="example-text-input" class="col-2 col-form-label"><?php e_("Third link"); ?></label>
-                                                    <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][2]['title']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][2][title]" type="text" class="form-control" placeholder="Intitulé"></div>
-                                                    <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][2]['link']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][2][link]" type="text" class="form-control" placeholder="Lien"></div>
-                                                    <label for="example-text-input" class="col-2 col-form-label"><?php e_("Fourth link"); ?></label>
-                                                    <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][3]['title']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][3][title]" type="text" class="form-control" placeholder="Intitulé"></div>
-                                                    <div class="col-md-2"><input value="<?php echoIfIsset($projects_element['Favorites'][3]['link']); ?>" name="projects[<?php echo $projects_name ?>][Favorites][3][link]" type="text" class="form-control" placeholder="Lien"></div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                <?php } ?>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </div>
                             <div class="row">
                                 <div class="col-sm-3">
