@@ -3,6 +3,10 @@
 DAMP is a little project under MIT licence.
 It personnalize your index.php on your local machine (http://localhost or http://127.0.0.1)
 
+<p align="center">
+<img  src="https://raw.githubusercontent.com/TiDJ/DAMP/master/assets/screen/top-homepage.png">
+</p>
+
 ## How does it work
 
 Define (name,version,description,website, important link, etc.) your projects, put an image in "dashboardamp/" directory (optionnal) and that's all !
