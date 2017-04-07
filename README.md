@@ -38,6 +38,12 @@ cd DAMP
 cp config.default.json config.json # or /var/www, /www, etc.
 ```
 
+Here is an example of the config part :
+
+<p align="center">
+<img  src="https://raw.githubusercontent.com/TiDJ/DAMP/master/assets/screen/config-homepage.png">
+</p>
+
 ## Librairies
 - jQuery@3.1.1,
 - Bootstrap@v4-alpha
