@@ -26,7 +26,7 @@ $messages = array(
    "fr" => array(
       "langue" => "Francais",
       // Header
-      "Launch fastly your projects with Dashboard Apache Mysql PHP" => "Lancez rapidement vos projects avec Dashboard Apache Mysql PHP",
+      "Launch fastly your projects with Dashboard Apache MySQL PHP" => "Lancez rapidement vos projects avec le Dashboard Apache MySQL PHP",
       "Projects" => "Projets",
       "Configuration" => "Configuration",
       "Customization" => "Personnalisation",
